@@ -13,7 +13,7 @@ type State struct {
 	move   Move
 }
 
-// isGoal return whether the state is the goal state.
+// isGoal returns whether the state is the goal state.
 func (s State) isGoal() bool {
 	for i, n := range s.board {
 		if i != n {
