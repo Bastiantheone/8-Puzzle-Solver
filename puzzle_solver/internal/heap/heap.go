@@ -6,7 +6,7 @@ import (
 
 // node is an item in the heap. It contains a game state and its priority.
 type node struct {
-	state puzzle_solver.State
+	state *puzzle_solver.State
 	// p is the priority of the node.
 	p int
 }
@@ -25,7 +25,7 @@ func New() *Heap {
 }
 
 // Push inserts the state and its priority into the heap.
-func (h *Heap) Push(state puzzle_solver.State, priority int) {
+func (h *Heap) Push(state *puzzle_solver.State, priority int) {
 	item := node{state: state, p: priority}
 	h.n++
 	if h.n >= len(h.items) {
@@ -40,7 +40,7 @@ func (h *Heap) Push(state puzzle_solver.State, priority int) {
 // removes it from the heap.
 //
 // It returns nil, 0 if the heap is empty.
-func (h *Heap) Pop() puzzle_solver.State {
+func (h *Heap) Pop() *puzzle_solver.State {
 	if h.n == 0 {
 		return nil, 0
 	}
