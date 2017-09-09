@@ -1,12 +1,8 @@
 package heap
 
-import (
-	"github.com/Bastiantheone/8-Puzzle-Solver/puzzle_solver"
-)
-
-// node is an item in the heap. It contains a game state and its priority.
+// node is an item in the heap. It contains a game state's key and its priority.
 type node struct {
-	state *puzzle_solver.State
+	key string
 	// p is the priority of the node.
 	p int
 }
@@ -24,9 +20,9 @@ func New() *Heap {
 	return h
 }
 
-// Push inserts the state and its priority into the heap.
-func (h *Heap) Push(state *puzzle_solver.State, priority int) {
-	item := node{state: state, p: priority}
+// Push inserts the state's key and its priority into the heap.
+func (h *Heap) Push(key string, priority int) {
+	item := node{key: key, p: priority}
 	h.n++
 	if h.n >= len(h.items) {
 		h.items = append(h.items, item)
@@ -36,22 +32,22 @@ func (h *Heap) Push(state *puzzle_solver.State, priority int) {
 	h.moveUp(h.n)
 }
 
-// Pop returns the state with the lowest priority and
+// Pop returns the state's key with the lowest priority and
 // removes it from the heap.
 //
-// It returns nil, 0 if the heap is empty.
-func (h *Heap) Pop() *puzzle_solver.State {
+// It returns an empty string if the heap is empty.
+func (h *Heap) Pop() string {
 	if h.n == 0 {
-		return nil, 0
+		return ""
 	}
 	item := h.items[1]
 	h.n--
 	if h.n == 0 {
-		return item.state
+		return item.key
 	}
 	h.swap(1, h.n+1)
 	h.moveDown(1)
-	return item.state
+	return item.key
 }
 
 // IsEmpty returns whether a heap is empty.
