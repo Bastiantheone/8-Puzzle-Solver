@@ -3,6 +3,7 @@ package puzzle_solver
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type State struct {
@@ -24,7 +25,7 @@ func (s State) isGoal() bool {
 }
 
 // Moves returns the moves made to get to the state.
-func (s State) Moves() []Move {
+func (s State) moves() []Move {
 	moves := make([]Move, s.cost)
 	if s.cost < 1 {
 		return moves
@@ -125,6 +126,10 @@ const (
 	Left  Move = "Left"
 	Right Move = "Right"
 )
+
+func (m Move) equals(m2 Move) bool {
+	return strings.Compare(string(m), string(m2)) == 0
+}
 
 // board is the 3x3 puzzle board.
 type board []int

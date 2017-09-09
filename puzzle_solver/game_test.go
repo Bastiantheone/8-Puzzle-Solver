@@ -29,7 +29,7 @@ func TestMoves(t *testing.T) {
 	s2 := State{origin: &s1, move: Right, cost: 2}
 	s3 := State{origin: &s2, move: Down, cost: 3}
 	want := []Move{Left, Right, Down}
-	got := s3.Moves()
+	got := s3.moves()
 	if len(got) != len(want) {
 		t.Fatalf("got = %d moves, want = %d", len(got), len(want))
 	}

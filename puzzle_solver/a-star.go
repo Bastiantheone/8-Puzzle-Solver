@@ -4,8 +4,12 @@ import (
 	"github.com/Bastiantheone/8-Puzzle-Solver/puzzle_solver/internal/heap"
 )
 
+// Solve returns the moves to get to the goal state the fastest.
+//
+// It returns nil if there is no solution.
+// It uses the A* star algorithm to achieve that goal.
 func Solve(start State) []Move {
-	var states map[string]State
+	states := make(map[string]State)
 	h := heap.New()
 	h.Push(start.key(), 0)
 	states[start.key()] = start
@@ -13,7 +17,7 @@ func Solve(start State) []Move {
 		currentKey := h.Pop()
 		current := states[currentKey]
 		if current.isGoal() {
-			return current.Moves()
+			return current.moves()
 		}
 		for _, next := range current.neighbors() {
 			key := next.key()
