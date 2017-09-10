@@ -100,3 +100,21 @@ func TestKey(t *testing.T) {
 		}
 	}
 }
+
+func TestSolvable(t *testing.T) {
+	tests := []struct {
+		b    board
+		want bool
+	}{
+		{board{0, 1, 2, 6, 7, 8, 3, 5, 4}, false},
+		{board{1, 0, 2, 6, 7, 8, 3, 4, 5}, true},
+		{board{7, 2, 4, 5, 0, 6, 8, 1, 3}, true},
+	}
+	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
+	for i, test := range tests {
+		got := test.b.solvable()
+		if got != test.want {
+			t.Errorf("test %d: got = %v, want = %v", i, got, test.want)
+		}
+	}
+}

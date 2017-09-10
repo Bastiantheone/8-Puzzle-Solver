@@ -176,6 +176,22 @@ func (b board) swap(i, j int) board {
 	return b
 }
 
+// solvable returns whether a board is solvable.
+// It counts the number of inversions and if it
+// is even the board is solvable.
+func (b board) solvable() bool {
+	inversions := 0
+	// FIXME could use a nlogn sort algorithm to improve time complexity
+	for i := 0; i < len(b)-1; i++ {
+		for j := i + 1; j < len(b); j++ {
+			if b[i] != 0 && b[j] != 0 && goal[b[i]] > goal[b[j]] {
+				inversions++
+			}
+		}
+	}
+	return inversions%2 == 0
+}
+
 // abs returns the absolute value of x.
 func abs(x int) int {
 	if x < 0 {

@@ -9,6 +9,9 @@ import (
 // It returns nil if there is no solution.
 // It uses the A* star algorithm to achieve that goal.
 func Solve(start State) []Move {
+	if !start.board.solvable() {
+		return nil
+	}
 	states := make(map[string]State)
 	h := heap.New()
 	h.Push(start.key(), 0)
