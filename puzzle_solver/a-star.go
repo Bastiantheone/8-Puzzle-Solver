@@ -8,6 +8,10 @@ import (
 //
 // It returns nil if there is no solution.
 // It uses the A* star algorithm to achieve that goal.
+//
+// Goal state: 	|0 1 2|
+//		|3 4 5|
+// 		|6 7 8|
 func Solve(start State) []Move {
 	states := make(map[string]State)
 	h := heap.New()
@@ -17,7 +21,7 @@ func Solve(start State) []Move {
 		currentKey := h.Pop()
 		current := states[currentKey]
 		if current.isGoal() {
-			return current.moves()
+			return append(current.moves(), Goal)
 		}
 		for _, next := range current.neighbors() {
 			key := next.key()

@@ -14,6 +14,12 @@ type State struct {
 	move   Move
 }
 
+// NewState returns a State pointer for the given board. It should be used to
+// create the start state.
+func NewState(board []int) State {
+	return State{board: board}
+}
+
 // isGoal returns whether the state is the goal state.
 func (s State) isGoal() bool {
 	for i, n := range s.board {
@@ -125,10 +131,15 @@ const (
 	Down  Move = "Down"
 	Left  Move = "Left"
 	Right Move = "Right"
+	Goal  Move = "Goal"
 )
 
 func (m Move) equals(m2 Move) bool {
 	return strings.Compare(string(m), string(m2)) == 0
+}
+
+func (m Move) String() string {
+	return string(m)
 }
 
 // board is the 3x3 puzzle board.
