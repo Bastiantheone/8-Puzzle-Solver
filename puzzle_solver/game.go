@@ -7,13 +7,27 @@ import (
 )
 
 // goal is the goal board configuration.
+// See SetGoal for further explanation.
 var goal board
 
 // SetGoal sets the goal configuration.
-// The value indicates the position the nr at the index
+// The value indicates the position the number at the index
 // should hold.
+//
+// e.g: nGoal[1] = 6 means that one should be at index six.
 func SetGoal(nGoal []int) {
 	goal = nGoal
+}
+
+// SetGoalBoard takes the input board and converts it to the goal configuration.
+// Then it sets the goal configuration.
+//
+// e.g: goalBoard[1] = 6 means that six should be at index one.
+func SetGoalBoard(goalBoard []int) {
+	goal := make(board, 9)
+	for i, n := range goalBoard {
+		goal[n] = i
+	}
 }
 
 // State is a state of the 8-puzzle game.
