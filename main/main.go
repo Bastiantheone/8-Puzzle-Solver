@@ -17,7 +17,7 @@ import (
 // The program assumes the input is correct. The result is printed on the command line.
 func main() {
 	args := os.Args
-	if len(args) != 2 || len(args) != 3 {
+	if len(args) != 2 && len(args) != 3 {
 		panic(fmt.Errorf("puzzle_solver: got %d arguments, need 2 or 3", len(args)))
 	}
 	board, err := puzzle_solver.Read(args[1])
@@ -41,7 +41,7 @@ func main() {
 	}
 	output := "Solution: "
 	for _, move := range moves {
-		output += move.String()
+		output += move.String() + " "
 	}
 	fmt.Println(output)
 }

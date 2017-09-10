@@ -24,7 +24,7 @@ func SetGoal(nGoal []int) {
 //
 // e.g: goalBoard[1] = 6 means that six should be at index one.
 func SetGoalBoard(goalBoard []int) {
-	goal := make(board, 9)
+	goal = make(board, 9)
 	for i, n := range goalBoard {
 		goal[n] = i
 	}
