@@ -10,10 +10,13 @@ func TestSolve(t *testing.T) {
 		start State
 		want  []Move
 	}{
-		{State{board: board{1, 0, 2, 3, 4, 5, 6, 7, 8}}, []Move{Left, Goal}},
-		{State{board: board{1, 4, 2, 3, 0, 5, 6, 7, 8}}, []Move{Up, Left, Goal}},
-		{State{board: board{0, 1, 2, 3, 4, 5, 6, 8, 7}}, nil},
+		{State{board: board{1, 0, 2, 6, 7, 8, 3, 4, 5}}, []Move{Left, Goal}},
+		{State{board: board{1, 7, 2, 6, 0, 8, 3, 4, 5}}, []Move{Up, Left, Goal}},
+		{State{board: board{0, 1, 2, 6, 8, 7, 3, 4, 5}}, nil},
+		{State{board: board{7, 2, 4, 5, 0, 6, 8, 1, 3}}, []Move{Right, Up, Left, Down, Left, Down,
+			Right, Right, Up, Left, Left, Down, Right, Right, Up, Left, Left, Up, Right, Down, Left, Up, Goal}},
 	}
+	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
 		got := Solve(test.start)
 		if len(got) != len(test.want) {

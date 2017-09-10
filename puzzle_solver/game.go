@@ -6,6 +6,17 @@ import (
 	"strings"
 )
 
+// goal is the goal board configuration.
+var goal board
+
+// SetGoal sets the goal configuration.
+// The value indicates the position the nr at the index
+// should hold.
+func SetGoal(nGoal []int) {
+	goal = nGoal
+}
+
+// State is a state of the 8-puzzle game.
 type State struct {
 	// board is the 3x3 puzzle board.
 	board  board
@@ -23,7 +34,7 @@ func NewState(board []int) State {
 // isGoal returns whether the state is the goal state.
 func (s State) isGoal() bool {
 	for i, n := range s.board {
-		if i != n {
+		if i != goal[n] {
 			return false
 		}
 	}
@@ -106,8 +117,8 @@ func (s State) heuristic() int {
 			// skip the movable piece
 			continue
 		}
-		goalRow := n % 3
-		goalCol := n / 3
+		goalRow := goal[n] % 3
+		goalCol := goal[n] / 3
 		actualRow := i % 3
 		actualCol := i / 3
 		sum += abs(actualRow-goalRow) + abs(actualCol-goalCol)

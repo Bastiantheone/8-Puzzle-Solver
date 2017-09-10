@@ -10,10 +10,11 @@ func TestIsGoal(t *testing.T) {
 		board board
 		want  bool
 	}{
-		{board{0, 1, 2, 3, 4, 5, 6, 7, 8}, true},
-		{board{0, 1, 2, 6, 7, 8, 3, 4, 5}, false},
+		{board{0, 1, 2, 3, 4, 5, 6, 7, 8}, false},
+		{board{0, 1, 2, 6, 7, 8, 3, 4, 5}, true},
 		{board{8, 7, 6, 5, 4, 3, 2, 1, 0}, false},
 	}
+	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
 		s := State{board: test.board}
 		got := s.isGoal()
@@ -72,9 +73,10 @@ func TestHeuristic(t *testing.T) {
 		s    State
 		want int
 	}{
-		{State{board: board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, 2},
-		{State{board: board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, 3},
+		{State{board: board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, 8},
+		{State{board: board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, 9},
 	}
+	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
 		got := test.s.heuristic()
 		if got != test.want {

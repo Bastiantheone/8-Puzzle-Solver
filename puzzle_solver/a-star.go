@@ -8,10 +8,6 @@ import (
 //
 // It returns nil if there is no solution.
 // It uses the A* star algorithm to achieve that goal.
-//
-// Goal state: 	|0 1 2|
-//		|3 4 5|
-// 		|6 7 8|
 func Solve(start State) []Move {
 	states := make(map[string]State)
 	h := heap.New()
