@@ -7,6 +7,11 @@ $ go get github.com/Bastiantheone/8-Puzzle-Solver/main
 ```
 
 ## How to run it
+In the `%GOPATH%/bin` folder:
+```
+$ main {path to start file} {optional: path to goal file}
+```
+or
 ```
 $ go run {path to}main.go {path to start file} {optional: path to goal file}
 ```
