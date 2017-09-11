@@ -1,5 +1,6 @@
 # 8-Puzzle-Solver
-A program that solves the 8-puzzle problem using the A* algorithm written in [Go](https://golang.org/)
+A program that solves the 8-puzzle problem using the A* algorithm written in [Go](https://golang.org/).
+The program solves the puzzle in far under a second.
 
 ## Installation
 ```
