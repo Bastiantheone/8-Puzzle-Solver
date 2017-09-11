@@ -9,8 +9,10 @@ import (
 // It returns nil if there is no solution.
 // It uses the A* star algorithm to achieve that goal.
 func Solve(start State) ([]Move, []string) {
+	configs := make([]string, 1)
+	configs[0] = start.board.String()
 	if !start.board.solvable() {
-		return nil, []string{start.board.String()}
+		return nil, configs
 	}
 	states := make(map[string]State)
 	h := heap.New()
@@ -20,8 +22,8 @@ func Solve(start State) ([]Move, []string) {
 		currentKey := h.Pop()
 		current := states[currentKey]
 		if current.isGoal() {
-			moves, configs := current.moves()
-			return append(moves, Goal), append(configs, current.board.String())
+			moves, temp := current.moves()
+			return append(moves, Goal), append(configs, temp...)
 		}
 		for _, next := range current.neighbors() {
 			key := next.key()
@@ -33,5 +35,5 @@ func Solve(start State) ([]Move, []string) {
 			}
 		}
 	}
-	return nil, []string{start.board.String()}
+	return nil, configs
 }

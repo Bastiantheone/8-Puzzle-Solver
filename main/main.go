@@ -43,7 +43,7 @@ func main() {
 	}
 	output := "Solution: \n"
 	for i, move := range moves {
-		output += move.String() + "\n" + configs[i] + "\n"
+		output += configs[i] + "\n" + move.String() + "\n"
 	}
 	output += strconv.Itoa(len(moves)-1) + " Steps"
 	fmt.Println(output)
