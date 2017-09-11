@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/Bastiantheone/8-Puzzle-Solver/puzzle_solver"
 )
@@ -43,5 +44,6 @@ func main() {
 	for _, move := range moves {
 		output += move.String() + " "
 	}
+	output += strconv.Itoa(len(moves)-1) + " Steps"
 	fmt.Println(output)
 }
