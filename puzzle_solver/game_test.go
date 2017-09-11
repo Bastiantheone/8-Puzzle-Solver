@@ -26,17 +26,26 @@ func TestIsGoal(t *testing.T) {
 
 func TestMoves(t *testing.T) {
 	s0 := State{}
-	s1 := State{origin: &s0, move: Left, cost: 1}
-	s2 := State{origin: &s1, move: Right, cost: 2}
-	s3 := State{origin: &s2, move: Down, cost: 3}
-	want := []Move{Left, Right, Down}
-	got := s3.moves()
-	if len(got) != len(want) {
-		t.Fatalf("got = %d moves, want = %d", len(got), len(want))
+	s1 := State{origin: &s0, board: board{2}, move: Left, cost: 1}
+	s2 := State{origin: &s1, board: board{1}, move: Right, cost: 2}
+	s3 := State{origin: &s2, board: board{0}, move: Down, cost: 3}
+	wantMoves := []Move{Left, Right, Down}
+	wantConfigs := []string{"2 ", "1 ", "0 "}
+	gotMoves, gotConfigs := s3.moves()
+	if len(gotMoves) != len(wantMoves) {
+		t.Fatalf("got = %d moves, want = %d", len(gotMoves), len(wantMoves))
 	}
-	for i := range got {
-		if got[i] != want[i] {
-			t.Errorf("got[%d] = %s, want[%d] = %s", i, got[i], i, want[i])
+	for i := range gotMoves {
+		if gotMoves[i] != wantMoves[i] {
+			t.Errorf("got[%d] = %s, want[%d] = %s", i, gotMoves[i], i, wantMoves[i])
+		}
+	}
+	if len(gotConfigs) != len(wantConfigs) {
+		t.Fatalf("got = %d configurations, want = %d", len(gotConfigs), len(wantConfigs))
+	}
+	for i := range gotConfigs {
+		if strings.Compare(gotConfigs[i], wantConfigs[i]) != 0 {
+			t.Errorf("got[%d] = %s, want[%d] = %s", i, gotConfigs[i], i, wantConfigs[i])
 		}
 	}
 }

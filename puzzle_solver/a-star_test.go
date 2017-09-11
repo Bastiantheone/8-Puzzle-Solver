@@ -18,7 +18,7 @@ func TestSolve(t *testing.T) {
 	}
 	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
-		got := Solve(test.start)
+		got, _ := Solve(test.start)
 		if len(got) != len(test.want) {
 			t.Fatalf("test %d: got = %d moves, want = %d", i, len(got), len(test.want))
 		}

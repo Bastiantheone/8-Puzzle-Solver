@@ -35,14 +35,15 @@ func main() {
 		puzzle_solver.SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	}
 	start := puzzle_solver.NewState(board)
-	moves := puzzle_solver.Solve(start)
+	moves, configs := puzzle_solver.Solve(start)
 	if moves == nil {
 		fmt.Println("No Solution")
+		fmt.Println(configs[0])
 		return
 	}
-	output := "Solution: "
-	for _, move := range moves {
-		output += move.String() + " "
+	output := "Solution: \n"
+	for i, move := range moves {
+		output += move.String() + "\n" + configs[i] + "\n"
 	}
 	output += strconv.Itoa(len(moves)-1) + " Steps"
 	fmt.Println(output)

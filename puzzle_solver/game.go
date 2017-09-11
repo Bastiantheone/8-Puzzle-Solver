@@ -55,22 +55,26 @@ func (s State) isGoal() bool {
 	return true
 }
 
-// Moves returns the moves made to get to the state.
-func (s State) moves() []Move {
+// Moves returns the moves made to get to the state. It also returns
+// each board configuration.
+func (s State) moves() ([]Move, []string) {
 	moves := make([]Move, s.cost)
+	configs := make([]string, s.cost)
 	if s.cost < 1 {
-		return moves
+		return moves, configs
 	}
 	moves[s.cost-1] = s.move
+	configs[s.cost-1] = s.board.String()
 	for i := s.cost - 2; ; i-- {
 		s = *s.origin
 		if s.origin == nil {
-			return moves
+			return moves, configs
 		}
 		if i < 0 {
 			panic(fmt.Errorf("puzzle_solver: more moves than cost, for state %v", s))
 		}
 		moves[i] = s.move
+		configs[i] = s.board.String()
 	}
 }
 
@@ -190,6 +194,17 @@ func (b board) solvable() bool {
 		}
 	}
 	return inversions%2 == 0
+}
+
+func (b board) String() string {
+	str := ""
+	for i, n := range b {
+		if i != 0 && i%3 == 0 {
+			str += "\n"
+		}
+		str += strconv.Itoa(n) + " "
+	}
+	return str
 }
 
 // abs returns the absolute value of x.
