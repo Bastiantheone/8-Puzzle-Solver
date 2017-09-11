@@ -48,6 +48,7 @@ func BenchmarkSolve(b *testing.B) {
 		}
 		start := State{board: board}
 		b.StartTimer()
+		SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 		Solve(start)
 	}
 }
