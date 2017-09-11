@@ -28,7 +28,7 @@ func Solve(start State) []Move {
 			if old, exists := states[key]; !exists || next.cost < old.cost {
 				states[key] = next
 				priority := next.cost + next.heuristic()
-				h.Push(next.key(), priority)
+				h.Push(key, priority)
 			}
 		}
 	}
