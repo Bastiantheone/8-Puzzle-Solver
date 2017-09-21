@@ -1,4 +1,4 @@
-package puzzle_solver
+package reader
 
 import (
 	"bufio"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// Read reads the file and returns all integers seperated by white space
+// Read reads the file and returns all integers separated by white space
 // of the file as a slice.
 func Read(path string) ([]int, error) {
 	f, err := os.Open(path)

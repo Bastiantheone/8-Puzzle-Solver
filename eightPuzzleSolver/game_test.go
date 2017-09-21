@@ -1,4 +1,4 @@
-package puzzle_solver
+package eightPuzzleSolver
 
 import (
 	"strings"

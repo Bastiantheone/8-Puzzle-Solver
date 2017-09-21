@@ -1,4 +1,4 @@
-package puzzle_solver
+package eightPuzzleSolver
 
 import (
 	"fmt"
@@ -153,6 +153,7 @@ func (s State) key() string {
 	return key
 }
 
+// Move is the possible move of the zero puzzle tile
 type Move string
 
 const (
@@ -190,7 +191,7 @@ func (b board) solvable() bool {
 			continue
 		}
 		for j := i + 1; j < len(goal); j++ {
-			if goal[i] > goal[j] && goal[j]!= 0 {
+			if goal[i] > goal[j] && goal[j] != 0 {
 				invGoal++
 			}
 		}

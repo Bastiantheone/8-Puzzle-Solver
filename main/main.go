@@ -5,7 +5,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/Bastiantheone/8-Puzzle-Solver/puzzle_solver"
+	"github.com/Bastiantheone/8-Puzzle-Solver/eightPuzzleSolver"
+	"github.com/Bastiantheone/8-Puzzle-Solver/reader"
 )
 
 // main reads the file given as command line argument. It extracts the board from the file
@@ -21,21 +22,21 @@ func main() {
 	if len(args) != 2 && len(args) != 3 {
 		panic(fmt.Errorf("puzzle_solver: got %d arguments, need 2 or 3", len(args)))
 	}
-	board, err := puzzle_solver.Read(args[1])
+	board, err := reader.Read(args[1])
 	if err != nil {
 		panic(err)
 	}
 	if len(args) == 3 {
-		goal, err := puzzle_solver.Read(args[2])
+		goal, err := reader.Read(args[2])
 		if err != nil {
 			panic(err)
 		}
-		puzzle_solver.SetGoalBoard(goal)
+		eightPuzzleSolver.SetGoalBoard(goal)
 	} else {
-		puzzle_solver.SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
+		eightPuzzleSolver.SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	}
-	start := puzzle_solver.NewState(board)
-	moves, configs := puzzle_solver.Solve(start)
+	start := eightPuzzleSolver.NewState(board)
+	moves, configs := eightPuzzleSolver.Solve(start)
 	if moves == nil {
 		fmt.Println("No Solution")
 		fmt.Println(configs[0])
