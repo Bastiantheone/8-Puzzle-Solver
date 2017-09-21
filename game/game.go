@@ -1,4 +1,4 @@
-package eightPuzzleSolver
+package game
 
 import (
 	"fmt"
@@ -8,7 +8,10 @@ import (
 
 // goal is the goal board configuration.
 // See SetGoal for further explanation.
-var goal board
+var goal Board
+
+// n represents the n*n dimensions of the board.
+var n int
 
 // SetGoal sets the goal configuration.
 // The value indicates the position the number at the index
@@ -17,6 +20,7 @@ var goal board
 // e.g: nGoal[1] = 6 means that one should be at index six.
 func SetGoal(nGoal []int) {
 	goal = nGoal
+	setN()
 }
 
 // SetGoalBoard takes the input board and converts it to the goal configuration.
@@ -24,16 +28,28 @@ func SetGoal(nGoal []int) {
 //
 // e.g: goalBoard[1] = 6 means that six should be at index one.
 func SetGoalBoard(goalBoard []int) {
-	goal = make(board, 9)
+	goal = make(Board, 9)
 	for i, n := range goalBoard {
 		goal[n] = i
+	}
+	setN()
+}
+
+func setN() {
+	switch len(goal) {
+	case 9:
+		n = 3
+	case 16:
+		n = 4
+	default:
+		panic(fmt.Errorf("game: Board of length %d not implemented", len(goal)))
 	}
 }
 
 // State is a state of the 8-puzzle game.
 type State struct {
 	// board is the 3x3 puzzle board.
-	board  board
+	board  Board
 	origin *State
 	cost   int
 	move   Move
@@ -45,10 +61,20 @@ func NewState(board []int) State {
 	return State{board: board}
 }
 
-// isGoal returns whether the state is the goal state.
-func (s State) isGoal() bool {
-	for i, n := range s.board {
-		if i != goal[n] {
+// Board returns the board at the current state.
+func (s State) Board() Board {
+	return s.board
+}
+
+// Cost returns the cost to get to the current state.
+func (s State) Cost() int {
+	return s.cost
+}
+
+// IsGoal returns whether the state is the goal state.
+func (s State) IsGoal() bool {
+	for i, v := range s.board {
+		if i != goal[v] {
 			return false
 		}
 	}
@@ -57,7 +83,7 @@ func (s State) isGoal() bool {
 
 // Moves returns the moves made to get to the state. It also returns
 // each board configuration.
-func (s State) moves() ([]Move, []string) {
+func (s State) Moves() ([]Move, []string) {
 	moves := make([]Move, s.cost)
 	configs := make([]string, s.cost)
 	if s.cost < 1 {
@@ -71,16 +97,16 @@ func (s State) moves() ([]Move, []string) {
 			return moves, configs
 		}
 		if i < 0 {
-			panic(fmt.Errorf("puzzle_solver: more moves than cost, for state %v", s))
+			panic(fmt.Errorf("game: more moves than cost, for state %v", s))
 		}
 		moves[i] = s.move
 		configs[i] = s.board.String()
 	}
 }
 
-// neighbors returns the States that can be reached by doing
+// Neighbors returns the States that can be reached by doing
 // one move from this State.
-func (s State) neighbors() []State {
+func (s State) Neighbors() []State {
 	// find 0
 	var movable int
 	for i, n := range s.board {
@@ -90,62 +116,62 @@ func (s State) neighbors() []State {
 	}
 	// find potential moves
 	neighbors := make([]State, 0, 4)
-	col := movable % 3
-	row := movable / 3
+	col := movable % n
+	row := movable / n
 	if col > 0 {
 		// move left
-		nBoard := make(board, 9)
+		nBoard := make(Board, len(goal))
 		copy(nBoard, s.board)
 		nBoard = nBoard.swap(movable, movable-1)
 		neighbors = append(neighbors, State{board: nBoard, cost: s.cost + 1, origin: &s, move: Left})
 	}
-	if col < 2 {
+	if col < n-1 {
 		// move right
-		nBoard := make(board, 9)
+		nBoard := make(Board, len(goal))
 		copy(nBoard, s.board)
 		nBoard = nBoard.swap(movable, movable+1)
 		neighbors = append(neighbors, State{board: nBoard, cost: s.cost + 1, origin: &s, move: Right})
 	}
 	if row > 0 {
 		// move up
-		nBoard := make(board, 9)
+		nBoard := make(Board, len(goal))
 		copy(nBoard, s.board)
-		nBoard = nBoard.swap(movable, movable-3)
+		nBoard = nBoard.swap(movable, movable-n)
 		neighbors = append(neighbors, State{board: nBoard, cost: s.cost + 1, origin: &s, move: Up})
 	}
-	if row < 2 {
+	if row < n-1 {
 		// move down
-		nBoard := make(board, 9)
+		nBoard := make(Board, len(goal))
 		copy(nBoard, s.board)
-		nBoard = nBoard.swap(movable, movable+3)
+		nBoard = nBoard.swap(movable, movable+n)
 		neighbors = append(neighbors, State{board: nBoard, cost: s.cost + 1, origin: &s, move: Down})
 	}
 	return neighbors
 }
 
-// heuristic returns the manhattan distance to the goal state.
+// Heuristic returns the manhattan distance to the goal state.
 //
 // It is calculated by adding the distance from each number to its goal.
 // This is an underestimate of the actual cost and that makes the algorithm
 // complete.
-func (s State) heuristic() int {
+func (s State) Heuristic() int {
 	sum := 0
-	for i, n := range s.board {
-		if n == 0 {
+	for i, v := range s.board {
+		if v == 0 {
 			// skip the movable piece
 			continue
 		}
-		goalRow := goal[n] % 3
-		goalCol := goal[n] / 3
-		actualRow := i % 3
-		actualCol := i / 3
+		goalRow := goal[v] % n
+		goalCol := goal[v] / n
+		actualRow := i % n
+		actualCol := i / n
 		sum += abs(actualRow-goalRow) + abs(actualCol-goalCol)
 	}
 	return sum
 }
 
-// key returns a string representation of the state's board.
-func (s State) key() string {
+// Key returns a string representation of the state's board.
+func (s State) Key() string {
 	key := ""
 	for _, n := range s.board {
 		key += strconv.Itoa(n)
@@ -164,7 +190,8 @@ const (
 	Goal  Move = "Goal"
 )
 
-func (m Move) equals(m2 Move) bool {
+// Equals returns whether m and m2 are the same.
+func (m Move) Equals(m2 Move) bool {
 	return strings.Compare(string(m), string(m2)) == 0
 }
 
@@ -172,19 +199,19 @@ func (m Move) String() string {
 	return string(m)
 }
 
-// board is the 3x3 puzzle board.
-type board []int
+// Board is the puzzle board.
+type Board []int
 
 // swap swaps the items at index i and j and returns the new board.
-func (b board) swap(i, j int) board {
+func (b Board) swap(i, j int) Board {
 	b[i], b[j] = b[j], b[i]
 	return b
 }
 
-// solvable returns whether a board is solvable.
+// Solvable returns whether a board is solvable.
 // It counts the number of inversions and if it
 // is even the board is solvable.
-func (b board) solvable() bool {
+func (b Board) Solvable() bool {
 	invGoal := 0
 	for i := range goal {
 		if goal[i] == 0 {
@@ -210,13 +237,13 @@ func (b board) solvable() bool {
 	return invGoal%2 == invBoard%2
 }
 
-func (b board) String() string {
+func (b Board) String() string {
 	str := ""
-	for i, n := range b {
-		if i != 0 && i%3 == 0 {
+	for i, v := range b {
+		if i != 0 && i%n == 0 {
 			str += "\n"
 		}
-		str += strconv.Itoa(n) + " "
+		str += strconv.Itoa(v) + " "
 	}
 	return str
 }

@@ -1,4 +1,4 @@
-package eightPuzzleSolver
+package game
 
 import (
 	"strings"
@@ -7,17 +7,17 @@ import (
 
 func TestIsGoal(t *testing.T) {
 	tests := []struct {
-		board board
+		board Board
 		want  bool
 	}{
-		{board{0, 1, 2, 3, 4, 5, 6, 7, 8}, false},
-		{board{0, 1, 2, 6, 7, 8, 3, 4, 5}, true},
-		{board{8, 7, 6, 5, 4, 3, 2, 1, 0}, false},
+		{Board{0, 1, 2, 3, 4, 5, 6, 7, 8}, false},
+		{Board{0, 1, 2, 6, 7, 8, 3, 4, 5}, true},
+		{Board{8, 7, 6, 5, 4, 3, 2, 1, 0}, false},
 	}
 	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
 		s := State{board: test.board}
-		got := s.isGoal()
+		got := s.IsGoal()
 		if got != test.want {
 			t.Errorf("test %d: got = %v, want = %v", i, got, test.want)
 		}
@@ -26,12 +26,12 @@ func TestIsGoal(t *testing.T) {
 
 func TestMoves(t *testing.T) {
 	s0 := State{}
-	s1 := State{origin: &s0, board: board{2}, move: Left, cost: 1}
-	s2 := State{origin: &s1, board: board{1}, move: Right, cost: 2}
-	s3 := State{origin: &s2, board: board{0}, move: Down, cost: 3}
+	s1 := State{origin: &s0, board: Board{2}, move: Left, cost: 1}
+	s2 := State{origin: &s1, board: Board{1}, move: Right, cost: 2}
+	s3 := State{origin: &s2, board: Board{0}, move: Down, cost: 3}
 	wantMoves := []Move{Left, Right, Down}
 	wantConfigs := []string{"2 ", "1 ", "0 "}
-	gotMoves, gotConfigs := s3.moves()
+	gotMoves, gotConfigs := s3.Moves()
 	if len(gotMoves) != len(wantMoves) {
 		t.Fatalf("got = %d moves, want = %d", len(gotMoves), len(wantMoves))
 	}
@@ -55,20 +55,20 @@ func TestNeighbors(t *testing.T) {
 		s    State
 		want []State
 	}{
-		{State{board: board{0, 1, 2, 3, 4, 5, 6, 7, 8}, cost: 0}, []State{State{board: board{1, 0, 2, 3, 4, 5, 6, 7, 8}, move: Right, cost: 1},
-			State{board: board{3, 1, 2, 0, 4, 5, 6, 7, 8}, move: Down, cost: 1}}},
-		{State{board: board{4, 1, 2, 3, 0, 5, 6, 7, 8}, cost: 1}, []State{State{board: board{4, 1, 2, 0, 3, 5, 6, 7, 8}, move: Left, cost: 2},
-			State{board: board{4, 1, 2, 3, 5, 0, 6, 7, 8}, move: Right, cost: 2}, State{board: board{4, 0, 2, 3, 1, 5, 6, 7, 8}, move: Up, cost: 2},
-			State{board: board{4, 1, 2, 3, 7, 5, 6, 0, 8}, move: Down, cost: 2}}},
+		{State{board: Board{0, 1, 2, 3, 4, 5, 6, 7, 8}, cost: 0}, []State{State{board: Board{1, 0, 2, 3, 4, 5, 6, 7, 8}, move: Right, cost: 1},
+			State{board: Board{3, 1, 2, 0, 4, 5, 6, 7, 8}, move: Down, cost: 1}}},
+		{State{board: Board{4, 1, 2, 3, 0, 5, 6, 7, 8}, cost: 1}, []State{State{board: Board{4, 1, 2, 0, 3, 5, 6, 7, 8}, move: Left, cost: 2},
+			State{board: Board{4, 1, 2, 3, 5, 0, 6, 7, 8}, move: Right, cost: 2}, State{board: Board{4, 0, 2, 3, 1, 5, 6, 7, 8}, move: Up, cost: 2},
+			State{board: Board{4, 1, 2, 3, 7, 5, 6, 0, 8}, move: Down, cost: 2}}},
 	}
 	for i, test := range tests {
-		got := test.s.neighbors()
+		got := test.s.Neighbors()
 		if len(got) != len(test.want) {
 			t.Fatalf("test %d: got = %d states, want = %d", i, len(got), len(test.want))
 		}
 		for j, n := range got {
-			if strings.Compare(n.key(), test.want[j].key()) != 0 {
-				t.Errorf("test %d: board differs got[%d] = %s, want[%d] = %s", i, j, n.key(), j, test.want[j].key())
+			if strings.Compare(n.Key(), test.want[j].Key()) != 0 {
+				t.Errorf("test %d: board differs got[%d] = %s, want[%d] = %s", i, j, n.Key(), j, test.want[j].Key())
 			}
 			if n.cost != test.want[j].cost {
 				t.Errorf("test %d: cost differs got[%d] = %d, want[%d] = %d", i, j, n.cost, j, test.want[j].cost)
@@ -82,12 +82,12 @@ func TestHeuristic(t *testing.T) {
 		s    State
 		want int
 	}{
-		{State{board: board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, 8},
-		{State{board: board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, 9},
+		{State{board: Board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, 8},
+		{State{board: Board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, 9},
 	}
 	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
-		got := test.s.heuristic()
+		got := test.s.Heuristic()
 		if got != test.want {
 			t.Errorf("test %d: got = %d, want = %d", i, got, test.want)
 		}
@@ -99,11 +99,11 @@ func TestKey(t *testing.T) {
 		s    State
 		want string
 	}{
-		{State{board: board{0, 1, 2, 3, 4, 5, 6, 7, 8}}, "012345678"},
-		{State{board: board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, "102345687"},
+		{State{board: Board{0, 1, 2, 3, 4, 5, 6, 7, 8}}, "012345678"},
+		{State{board: Board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, "102345687"},
 	}
 	for i, test := range tests {
-		got := test.s.key()
+		got := test.s.Key()
 		if strings.Compare(got, test.want) != 0 {
 			t.Errorf("test %d: got = %s, want = %s", i, got, test.want)
 		}
@@ -112,16 +112,16 @@ func TestKey(t *testing.T) {
 
 func TestSolvable(t *testing.T) {
 	tests := []struct {
-		b    board
+		b    Board
 		want bool
 	}{
-		{board{0, 1, 2, 6, 7, 8, 3, 5, 4}, false},
-		{board{1, 0, 2, 6, 7, 8, 3, 4, 5}, true},
-		{board{7, 2, 4, 5, 0, 6, 8, 1, 3}, true},
+		{Board{0, 1, 2, 6, 7, 8, 3, 5, 4}, false},
+		{Board{1, 0, 2, 6, 7, 8, 3, 4, 5}, true},
+		{Board{7, 2, 4, 5, 0, 6, 8, 1, 3}, true},
 	}
 	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
-		got := test.b.solvable()
+		got := test.b.Solvable()
 		if got != test.want {
 			t.Errorf("test %d: got = %v, want = %v", i, got, test.want)
 		}

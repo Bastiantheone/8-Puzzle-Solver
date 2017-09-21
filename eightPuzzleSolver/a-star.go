@@ -2,35 +2,36 @@ package eightPuzzleSolver
 
 import (
 	"github.com/Bastiantheone/8-Puzzle-Solver/eightPuzzleSolver/internal/heap"
+	"github.com/Bastiantheone/8-Puzzle-Solver/game"
 )
 
 // Solve returns the moves and the different board configurations to get to the goal state the fastest.
 //
 // It returns nil if there is no solution.
 // It uses the A* star algorithm to achieve that goal.
-func Solve(start State) ([]Move, []string) {
+func Solve(start game.State) ([]game.Move, []string) {
 	configs := make([]string, 1)
-	configs[0] = start.board.String()
-	if !start.board.solvable() {
+	configs[0] = start.Board().String()
+	if !start.Board().Solvable() {
 		return nil, configs
 	}
-	states := make(map[string]State)
+	states := make(map[string]game.State)
 	h := heap.New()
-	h.Push(start.key(), 0)
-	states[start.key()] = start
+	h.Push(start.Key(), 0)
+	states[start.Key()] = start
 	for !h.IsEmpty() {
 		currentKey := h.Pop()
 		current := states[currentKey]
-		if current.isGoal() {
-			moves, temp := current.moves()
-			return append(moves, Goal), append(configs, temp...)
+		if current.IsGoal() {
+			moves, temp := current.Moves()
+			return append(moves, game.Goal), append(configs, temp...)
 		}
-		for _, next := range current.neighbors() {
-			key := next.key()
+		for _, next := range current.Neighbors() {
+			key := next.Key()
 			// update if a better way to a state is found.
-			if old, exists := states[key]; !exists || next.cost < old.cost {
+			if old, exists := states[key]; !exists || next.Cost() < old.Cost() {
 				states[key] = next
-				priority := next.cost + next.heuristic()
+				priority := next.Cost() + next.Heuristic()
 				h.Push(key, priority)
 			}
 		}
