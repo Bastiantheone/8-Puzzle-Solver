@@ -28,7 +28,7 @@ func SetGoal(nGoal []int) {
 //
 // e.g: goalBoard[1] = 6 means that six should be at index one.
 func SetGoalBoard(goalBoard []int) {
-	goal = make(Board, 9)
+	goal = make(Board, len(goalBoard))
 	for i, n := range goalBoard {
 		goal[n] = i
 	}
@@ -251,15 +251,20 @@ func (b Board) swap(i, j int) Board {
 //
 // It assumes that the board size is either 3x3 or 4x4.
 func (b Board) Solvable() bool {
+	// convert from goal to the goal board configuration.
+	goalBoard := make([]int, len(goal))
+	for i, v := range goal {
+		goalBoard[v] = i
+	}
 	invGoal := 0
 	var zeroGoal int
-	for i := range goal {
-		if goal[i] == 0 {
-			zeroGoal = i + 1
+	for i := range goalBoard {
+		if goalBoard[i] == 0 {
+			zeroGoal = i/n + 1
 			continue
 		}
-		for j := i + 1; j < len(goal); j++ {
-			if goal[i] > goal[j] && goal[j] != 0 {
+		for j := i + 1; j < len(goalBoard); j++ {
+			if goalBoard[i] > goalBoard[j] && goalBoard[j] != 0 {
 				invGoal++
 			}
 		}
@@ -268,7 +273,7 @@ func (b Board) Solvable() bool {
 	var zeroBoard int
 	for i := range b {
 		if b[i] == 0 {
-			zeroBoard = i + 1
+			zeroBoard = i/n + 1
 			continue
 		}
 		for j := i + 1; j < len(b); j++ {
