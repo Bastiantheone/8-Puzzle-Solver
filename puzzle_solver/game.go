@@ -184,16 +184,29 @@ func (b board) swap(i, j int) board {
 // It counts the number of inversions and if it
 // is even the board is solvable.
 func (b board) solvable() bool {
-	inversions := 0
-	// FIXME could use a nlogn sort algorithm to improve time complexity
-	for i := 0; i < len(b)-1; i++ {
-		for j := i + 1; j < len(b); j++ {
-			if b[i] != 0 && b[j] != 0 && goal[b[i]] > goal[b[j]] {
-				inversions++
+	invGoal := 0
+	for i := range goal {
+		if goal[i] == 0 {
+			continue
+		}
+		for j := i + 1; j < len(goal); j++ {
+			if goal[i] > goal[j] && goal[j]!= 0 {
+				invGoal++
 			}
 		}
 	}
-	return inversions%2 == 0
+	invBoard := 0
+	for i := range b {
+		if b[i] == 0 {
+			continue
+		}
+		for j := i + 1; j < len(b); j++ {
+			if b[i] > b[j] && b[j] != 0 {
+				invBoard++
+			}
+		}
+	}
+	return invGoal%2 == invBoard%2
 }
 
 func (b board) String() string {

@@ -11,10 +11,9 @@ import (
 func Solve(start State) ([]Move, []string) {
 	configs := make([]string, 1)
 	configs[0] = start.board.String()
-	/* FIXME sometimes it doesn't give the right solution
 	if !start.board.solvable() {
 		return nil, configs
-	}*/
+	}
 	states := make(map[string]State)
 	h := heap.New()
 	h.Push(start.key(), 0)
