@@ -1,7 +1,7 @@
 package eightPuzzleSolver
 
 import (
-	"github.com/Bastiantheone/8-Puzzle-Solver/eightPuzzleSolver/internal/heap"
+	"github.com/Bastiantheone/8-Puzzle-Solver/heap"
 	"github.com/Bastiantheone/8-Puzzle-Solver/game"
 )
 
