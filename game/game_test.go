@@ -77,7 +77,7 @@ func TestNeighbors(t *testing.T) {
 	}
 }
 
-func TestHeuristic(t *testing.T) {
+func TestManhattan(t *testing.T) {
 	tests := []struct {
 		s    State
 		want int
@@ -87,7 +87,24 @@ func TestHeuristic(t *testing.T) {
 	}
 	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
-		got := test.s.Heuristic()
+		got := test.s.manhattan()
+		if got != test.want {
+			t.Errorf("test %d: got = %d, want = %d", i, got, test.want)
+		}
+	}
+}
+
+func TestLinearConflict(t *testing.T) {
+	tests := []struct {
+		s    State
+		want int
+	}{
+		{State{board: Board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, 8},
+		{State{board: Board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, 2},
+	}
+	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
+	for i, test := range tests {
+		got := test.s.linearConflict()
 		if got != test.want {
 			t.Errorf("test %d: got = %d, want = %d", i, got, test.want)
 		}

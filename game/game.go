@@ -149,12 +149,17 @@ func (s State) Neighbors() []State {
 	return neighbors
 }
 
-// Heuristic returns the manhattan distance to the goal state.
+// Heuristic returns the linear conflict manhattan distance to the goal state.
 //
-// It is calculated by adding the distance from each number to its goal.
+// The manhattan distance is calculated by adding the distance from each number to its goal.
+// The linear conflict adds two moves for each linear conflict.
 // This is an underestimate of the actual cost and that makes the algorithm
 // complete.
 func (s State) Heuristic() int {
+	return s.manhattan() + s.linearConflict()
+}
+
+func (s State) manhattan() int {
 	sum := 0
 	for i, v := range s.board {
 		if v == 0 {
@@ -166,6 +171,38 @@ func (s State) Heuristic() int {
 		actualRow := i % n
 		actualCol := i / n
 		sum += abs(actualRow-goalRow) + abs(actualCol-goalCol)
+	}
+	return sum
+}
+
+func (s State) linearConflict() int {
+	sum := 0
+	for i := 0; i < len(goal)-1; i++ {
+		if s.board[i] == 0 {
+			continue
+		}
+		g := goal[s.board[i]]
+		if g > i && g/n == i/n { // goal is in the same row
+			for j := i + 1; j/n == i/n; j++ {
+				if s.board[j] == 0 {
+					continue
+				}
+				g2 := goal[s.board[j]]
+				if g2 <= i && g2/n == i/n {
+					sum += 2
+				}
+			}
+		} else if g > i && g%n == i%n { // goal is in the same column
+			for j := i + n; j < len(s.board); j += n {
+				if s.board[j] == 0 {
+					continue
+				}
+				g2 := goal[s.board[j]]
+				if g2 <= i && g2%n == i%n {
+					sum += 2
+				}
+			}
+		}
 	}
 	return sum
 }
@@ -211,10 +248,14 @@ func (b Board) swap(i, j int) Board {
 // Solvable returns whether a board is solvable.
 // It counts the number of inversions and if it
 // is even the board is solvable.
+//
+// It assumes that the board size is either 3x3 or 4x4.
 func (b Board) Solvable() bool {
 	invGoal := 0
+	var zeroGoal int
 	for i := range goal {
 		if goal[i] == 0 {
+			zeroGoal = i + 1
 			continue
 		}
 		for j := i + 1; j < len(goal); j++ {
@@ -224,8 +265,10 @@ func (b Board) Solvable() bool {
 		}
 	}
 	invBoard := 0
+	var zeroBoard int
 	for i := range b {
 		if b[i] == 0 {
+			zeroBoard = i + 1
 			continue
 		}
 		for j := i + 1; j < len(b); j++ {
@@ -233,6 +276,11 @@ func (b Board) Solvable() bool {
 				invBoard++
 			}
 		}
+	}
+	if len(b) == 16 {
+		// for the 15 puzzle the row number of the movable piece is added to the number of inversions.
+		invGoal += zeroGoal
+		invBoard += zeroBoard
 	}
 	return invGoal%2 == invBoard%2
 }
