@@ -1,8 +1,8 @@
 package eightPuzzleSolver
 
 import (
-	"github.com/Bastiantheone/8-Puzzle-Solver/heap"
 	"github.com/Bastiantheone/8-Puzzle-Solver/game"
+	"github.com/Bastiantheone/8-Puzzle-Solver/heap"
 )
 
 // Solve returns the moves and the different board configurations to get to the goal state the fastest.
