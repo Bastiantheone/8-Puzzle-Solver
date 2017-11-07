@@ -73,6 +73,9 @@ func (s State) Cost() int {
 
 // IsGoal returns whether the state is the goal state.
 func (s State) IsGoal() bool {
+	if len(s.board) != len(goal) {
+		return false
+	}
 	for i, v := range s.board {
 		if i != goal[v] {
 			return false
@@ -102,6 +105,15 @@ func (s State) Moves() ([]Move, []string) {
 		moves[i] = s.move
 		configs[i] = s.board.String()
 	}
+}
+
+func (s State) Path() map[string]bool {
+	states := make(map[string]bool, s.cost)
+	for i := 0; i < s.cost; i++ {
+		s = *s.origin
+		states[s.Key()] = true
+	}
+	return states
 }
 
 // Neighbors returns the States that can be reached by doing

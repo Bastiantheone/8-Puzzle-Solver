@@ -17,10 +17,9 @@ func Solve(start game.State) ([]game.Move, []string) {
 	}
 	threshold := start.Heuristic()
 	for {
-		var nrSteps int
-		start, nrSteps = search(start, threshold)
-		if start.IsGoal() {
-			moves, temp := start.Moves()
+		node, nrSteps := search(start, threshold)
+		if node.IsGoal() {
+			moves, temp := node.Moves()
 			return append(moves, game.Goal), append(configs, temp...)
 		}
 		if nrSteps > max {
@@ -41,6 +40,11 @@ func search(state game.State, threshold int) (game.State, int) {
 	min := math.MaxInt16
 	var next game.State
 	for _, neighbor := range state.Neighbors() {
+		// avoid cycles
+		path := neighbor.Path()
+		if path[neighbor.Key()] {
+			continue
+		}
 		s, h := search(neighbor, threshold)
 		if s.IsGoal() {
 			return s, h

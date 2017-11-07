@@ -8,14 +8,17 @@ import (
 func TestIsGoal(t *testing.T) {
 	tests := []struct {
 		board Board
+		goal  []int
 		want  bool
 	}{
-		{Board{0, 1, 2, 3, 4, 5, 6, 7, 8}, false},
-		{Board{0, 1, 2, 6, 7, 8, 3, 4, 5}, true},
-		{Board{8, 7, 6, 5, 4, 3, 2, 1, 0}, false},
+		{Board{0, 1, 2, 3, 4, 5, 6, 7, 8}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, false},
+		{Board{0, 1, 2, 6, 7, 8, 3, 4, 5}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, true},
+		{Board{8, 7, 6, 5, 4, 3, 2, 1, 0}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, false},
+		{Board{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0}, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0}, true},
+		{Board{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15}, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0}, false},
 	}
-	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
+		SetGoalBoard(test.goal)
 		s := State{board: test.board}
 		got := s.IsGoal()
 		if got != test.want {
@@ -60,8 +63,13 @@ func TestNeighbors(t *testing.T) {
 		{State{board: Board{4, 1, 2, 3, 0, 5, 6, 7, 8}, cost: 1}, []State{State{board: Board{4, 1, 2, 0, 3, 5, 6, 7, 8}, move: Left, cost: 2},
 			State{board: Board{4, 1, 2, 3, 5, 0, 6, 7, 8}, move: Right, cost: 2}, State{board: Board{4, 0, 2, 3, 1, 5, 6, 7, 8}, move: Up, cost: 2},
 			State{board: Board{4, 1, 2, 3, 7, 5, 6, 0, 8}, move: Down, cost: 2}}},
+		{State{board: Board{1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 11, 12, 13, 14, 15, 10}}, []State{State{board: Board{1, 2, 3, 4, 5, 6, 7, 8, 0, 9, 11, 12, 13, 14, 15, 10}, move: Left, cost: 1},
+			State{board: Board{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 0, 12, 13, 14, 15, 10}, move: Right, cost: 1}, State{board: Board{1, 2, 3, 4, 5, 0, 7, 8, 9, 6, 11, 12, 13, 14, 15, 10},
+				move: Up, cost: 1}, State{board: Board{1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 11, 12, 13, 0, 15, 10}, move: Down, cost: 1}}},
 	}
 	for i, test := range tests {
+		// set goal board to the same board, so that n is calculated correctly
+		SetGoalBoard(test.s.board)
 		got := test.s.Neighbors()
 		if len(got) != len(test.want) {
 			t.Fatalf("test %d: got = %d states, want = %d", i, len(got), len(test.want))
@@ -80,13 +88,15 @@ func TestNeighbors(t *testing.T) {
 func TestManhattan(t *testing.T) {
 	tests := []struct {
 		s    State
+		goal []int
 		want int
 	}{
-		{State{board: Board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, 8},
-		{State{board: Board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, 9},
+		{State{board: Board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, 8},
+		{State{board: Board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, 9},
+		{State{board: Board{4, 3, 2, 1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0}}, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0}, 8},
 	}
-	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
+		SetGoalBoard(test.goal)
 		got := test.s.manhattan()
 		if got != test.want {
 			t.Errorf("test %d: got = %d, want = %d", i, got, test.want)
@@ -97,13 +107,17 @@ func TestManhattan(t *testing.T) {
 func TestLinearConflict(t *testing.T) {
 	tests := []struct {
 		s    State
+		goal []int
 		want int
 	}{
-		{State{board: Board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, 8},
-		{State{board: Board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, 2},
+		{State{board: Board{0, 2, 1, 3, 4, 5, 6, 7, 8}}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, 8},
+		{State{board: Board{1, 0, 2, 3, 4, 5, 6, 8, 7}}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, 2},
+		{State{board: Board{1, 0, 2, 4, 3, 5, 6, 7, 8}}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, 2},
+		{State{board: Board{0, 7, 2, 6, 1, 8, 3, 4, 5}}, []int{0, 1, 2, 6, 7, 8, 3, 4, 5}, 2},
+		{State{board: Board{4, 3, 2, 1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0}}, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0}, 6},
 	}
-	SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	for i, test := range tests {
+		SetGoalBoard(test.goal)
 		got := test.s.linearConflict()
 		if got != test.want {
 			t.Errorf("test %d: got = %d, want = %d", i, got, test.want)

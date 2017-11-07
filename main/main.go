@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/Bastiantheone/8-Puzzle-Solver/eightPuzzleSolver"
+	"github.com/Bastiantheone/8-Puzzle-Solver/game"
 	"github.com/Bastiantheone/8-Puzzle-Solver/reader"
 )
 
@@ -31,11 +32,11 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		eightPuzzleSolver.SetGoalBoard(goal)
+		game.SetGoalBoard(goal)
 	} else {
-		eightPuzzleSolver.SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
+		game.SetGoal([]int{0, 1, 2, 6, 7, 8, 3, 4, 5})
 	}
-	start := eightPuzzleSolver.NewState(board)
+	start := game.NewState(board)
 	moves, configs := eightPuzzleSolver.Solve(start)
 	if moves == nil {
 		fmt.Println("No Solution")
